@@ -20,7 +20,7 @@ A backend CLI application for solving problems when debating online
 - 论点：
   - 编号：一个唯一的 ID，与论证共享编号，按顺序编号。
   - 内容：即一个声明，主张，观点。可以使用 `#<id>` 这样的语法来引用其它论点/论证。
-  - （对于每个用户而言）：支持，反对，中立，表示你对这个论点的看法。其中“支持”和“反对”的来源可以是自身（主动支持/反对），也可以是推导出来的。
+  - （对于每个用户而言）：支持，反对，中立，表示你对这个论点的看法。其中“支持”和“反对”的来源可以是自身（主动支持/反对），也可以是推导出来的。推导可以用 2-SAT 求解。
   - （对于每个用户而言）：主要论点/辅助论点，表示你是否关心人们对这个论点的看法。
   - 哪些用户关注了该论点。
 - 论证：
@@ -30,7 +30,7 @@ A backend CLI application for solving problems when debating online
   - 内容：即对这个推理过程的解释，可以为空。
   - （对于每个用户而言）：支持，反对，中立。
   - 哪些用户关注了该论点。
-  - 类型：两种：A 正则 B 正，B 误则 A 误；A 正则 B 误，B 正则 A 误。
+  - 类型：三种：A 正则 B 正，B 误则 A 误；A 正则 B 误，B 正则 A 误；A 误则 B 正，B 误则 A 正。
 
 命令：
 
@@ -68,7 +68,7 @@ A backend CLI application for solving problems when debating online
   - 添加论证
     - `debate demonstration add <A> <B> [content] [--type=type]`
     - 添加一个表示关于 `A` 和 `B`，内容为 `content` 的论证。若参数中没有 `content` 则从 stdin 读入，可以为空。
-    - type 表示：0->`A` 对则 `B` 对，`B` 误则 `A` 对。1 表示另一种。
+    - type 表示：1->`A` 正则 `B` 正，`B` 误则 `A` 误。2->`A` 正则 `B` 误，`B` 误则 `A` 正。3->`A` 误则 `B` 正，`B` 误则 `A` 正。
   - 显示论证列表
     - `debate demonstration list`
     - 显示论证列表，每一项只显示编号和内容。
