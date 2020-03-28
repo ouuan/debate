@@ -120,7 +120,7 @@ A backend CLI application for solving problems when debating online
   - 查看关注一个论点的用户列表
     - `debate watch list <id>`
     - 查看关注了 `id` 的用户列表。
-- 复制论点
+- 修改论点
   - `debate modify <id> <user> [content]`
   - 以 `content` 新建一个论点（若无 `content` 则从 stdin 读入，不能为空），复制 `id` 的入边和出边，将 `user` 对于 `id` 这个论点及其所有的入边/出边的主动支持/主动反对 **移动** 到新建的论点/论证上（`user` 对原来这些论点和论证的观点全部修改为中立）。
-  - 可以用来修改论点，进行补充说明。
+  - 可以用来修改论点，进行补充说明。但为了不破坏他人的观点，采用复制节点和邻边，仅移动自己观点的方式。
