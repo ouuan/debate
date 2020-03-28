@@ -20,16 +20,17 @@ A backend CLI application for solving problems when debating online
 - 论点：
   - 编号：一个唯一的 ID，与论证共享编号，按顺序编号。
   - 内容：即一个声明，主张，观点。可以使用 `#<id>` 这样的语法来引用其它论点/论证。
-  - （对于每个用户而言）：支持，反对，中立，表示你对这个论点的看法。其中“支持”和“反对”的来源可以是自身（主动支持），也可以是一条从一个主动支持点经过支持边到达自身的一条简单路径。
+  - （对于每个用户而言）：支持，反对，中立，表示你对这个论点的看法。其中“支持”和“反对”的来源可以是自身（主动支持/反对），也可以是推导出来的。
   - （对于每个用户而言）：主要论点/辅助论点，表示你是否关心人们对这个论点的看法。
   - 哪些用户关注了该论点。
 - 论证：
   - 编号：一个唯一的 ID，与论点共享编号，按顺序编号。可以使用 `#<id>` 这样的语法来引用其它论点/论证。
-  - 题设：一个论点（如果 xxx）。
-  - 结论：一个论点（那么 yyy）。
+  - A：一个论点（如果 xxx）。
+  - B：一个论点（那么 yyy）。
   - 内容：即对这个推理过程的解释，可以为空。
   - （对于每个用户而言）：支持，反对，中立。
   - 哪些用户关注了该论点。
+  - 类型：两种：A 正则 B 正，B 误则 A 误；A 正则 B 误，B 正则 A 误。
 
 命令：
 
@@ -53,36 +54,34 @@ A backend CLI application for solving problems when debating online
   - 显示论点列表
     - `debate argument list`
     - 显示论点列表，每一项只显示编号和内容。
-  - 显示某论点的出边
-    - `debate argument from <id>`
-    - 显示以 `id` 为题设的论证。
-  - 显示某论点的入边
-    - `debate argument to <id>`
-    - 显示以 `id` 为结论的论证。
+  - 显示与某论点有关的论证
+    - `debate argument related <id>`
+    - 显示与 `id` 有关的论证。
   - 显示某论点的支持/反对来源
-  	- `debate argument origin <id> <user> [-n,--number=number] [-d,--depth=depth] [-p,--path]`
-  	- 显示对于 `user` 来说 `id` 这个论点的支持/反对来源（经过支持边，以该论点为终点，在原图上以支持论点为起点/在反图上以反对论点为起点的简单路径），或提示 `user` 对 `id` 这个论点保持中立。
-  	- `-n,--number=number`，显示至多 `number` 个来源。若 `number` 为 0 则没有限制。
-  	- `-d,--depth=depth`，最多显示长度为 `depth` 的来源。若 `depth` 为 0 则只显示自己（主动支持/反对），若 `depth` 为 -1 则没有限制。
-  	- `-p,--path` 会显示具体的来源路径，否则只显示来源论点。
-  	- Warning: 使用`--path` 时若不使用 `--number` 加以限制，可能导致指数级的时间复杂度以及输出量。
+    - `debate argument origin <id> <user> [-n,--number=number] [-d,--depth=depth] [-p,--path]`
+    - 显示对于 `user` 来说 `id` 这个论点的支持/反对来源，或提示 `user` 对 `id` 这个论点保持中立。
+    - `-n,--number=number`，显示至多 `number` 个来源。若 `number` 为 0 则没有限制。
+    - `-d,--depth=depth`，最多显示长度为 `depth` 的来源。若 `depth` 为 0 则只显示自己（主动支持/反对），若 `depth` 为 -1 则没有限制。
+    - `-p,--path` 会显示具体的来源路径，否则只显示来源论点。
+    - Warning: 使用`--path` 时若不使用 `--number` 加以限制，可能导致指数级的时间复杂度以及输出量。
 - 论证
   - 添加论证
-    - `debate proof add <assumption> <conclusion> [content]`
-    - 添加一个表示 "`assumption` implies `conclusion` because of `content`" 的论证。若参数中没有 `content` 则从 stdin 读入，可以为空。
+    - `debate demonstration add <A> <B> [content] [--type=type]`
+    - 添加一个表示关于 `A` 和 `B`，内容为 `content` 的论证。若参数中没有 `content` 则从 stdin 读入，可以为空。
+    - type 表示：0->`A` 对则 `B` 对，`B` 误则 `A` 对。1 表示另一种。
   - 显示论证列表
-    - `debate proof list`
+    - `debate demonstration list`
     - 显示论证列表，每一项只显示编号和内容。
 - 支持论点/论证
   - `debate agree <id> <user>`
   - 使 `user` 这个用户主动支持 `id` 这个论点/论证。
   - 若 `id` 已被 `user` 被动反对，则不会进行任何操作并报错。
-  - 操作成功后，会显示这个操作所带来的新增被动支持论点。
+  - 操作成功后，会显示这个操作所带来的被动观点改动。
 - 反对论点/论证
   - `debate oppose <id> <user>`
   - 使 `user` 这个用户主动反对 `id` 这个论点/论证。
   - 若 `id` 已被 `user` 被动支持，则不会进行任何操作并报错。
-  - 操作成功后，会显示这个操作所带来的新增被动反对论点。
+  - 操作成功后，会显示这个操作所带来的被动观点改动。
 - 对论点/论证保持中立
   - `debate neutralize <id> <user>`
   - 取消 `user` 这个用户对 `id` 这个论点/论证的主动支持/主动反对。
