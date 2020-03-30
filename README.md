@@ -68,7 +68,7 @@ A backend CLI application for solving problems when debating online
   - 添加论证
     - `debate demonstration add <A> <B> [content] [--type=type]`
     - 添加一个表示关于 `A` 和 `B`，内容为 `content` 的论证。若参数中没有 `content` 则从 stdin 读入，可以为空。
-    - type 表示：1->`A` 正则 `B` 正，`B` 误则 `A` 误。2->`A` 正则 `B` 误，`B` 误则 `A` 正。3->`A` 误则 `B` 正，`B` 误则 `A` 正。
+    - type 表示：1->`A` 正则 `B` 正，`B` 误则 `A` 误。2->`A` 正则 `B` 误，`B` 正则 `A` 误。3->`A` 误则 `B` 正，`B` 误则 `A` 正。
   - 显示论证列表
     - `debate demonstration list`
     - 显示论证列表，每一项只显示编号和内容。
