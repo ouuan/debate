@@ -1,3 +1,5 @@
+This is deprecated. See [debate-v2](https://github.com/ouuan/debate-v2).
+
 # debate
 A backend CLI application for solving problems when debating online
 
